@@ -240,6 +240,9 @@ hl.config({
         },
     },
     misc = {
+        disable_watchdog_warning = true,
+        disable_xdg_env_checks = true,
+        disable_hyprland_guiutils_check = true,
         disable_hyprland_logo = true,
         disable_splash_rendering = true,
         vrr = 0,

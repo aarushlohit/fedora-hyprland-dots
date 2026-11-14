@@ -44,10 +44,11 @@ Item {
         onClicked: GlobalStates.overlayOpen = false
 
         OverlayTaskbar {
+            visible: GlobalStates.overlayOpen
             anchors {
                 horizontalCenter: parent.horizontalCenter
                 top: parent.top
-                topMargin: 50
+                topMargin: Appearance.sizes.barHeight + Appearance.sizes.hyprlandGapsOut + 10
             }
         }
 

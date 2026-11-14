@@ -14,6 +14,7 @@ import Quickshell.Hyprland
 Scope {
     id: overviewScope
     property bool dontAutoCancelSearch: false
+    property double superPressTimestamp: 0
 
     PanelWindow {
         id: panelWindow
@@ -181,11 +182,13 @@ Scope {
         description: "Toggles search on release"
 
         onPressed: {
+            overviewScope.superPressTimestamp = Date.now();
             GlobalStates.superReleaseMightTrigger = true;
         }
 
         onReleased: {
-            if (!GlobalStates.superReleaseMightTrigger) {
+            const elapsed = Date.now() - overviewScope.superPressTimestamp;
+            if (!GlobalStates.superReleaseMightTrigger || elapsed > 350) {
                 GlobalStates.superReleaseMightTrigger = true;
                 return;
             }

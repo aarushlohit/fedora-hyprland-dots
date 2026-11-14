@@ -49,4 +49,14 @@ Singleton {
             root.superDown = false
         }
     }
+
+    Connections {
+        target: Hyprland
+
+        function onRawEvent(event) {
+            if (!["openlayer", "closelayer", "screencast"].includes(event.name)) {
+                root.superReleaseMightTrigger = false;
+            }
+        }
+    }
 }

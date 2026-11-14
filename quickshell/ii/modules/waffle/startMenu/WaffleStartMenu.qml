@@ -10,6 +10,7 @@ import qs.modules.common.widgets
 
 Scope {
     id: root
+    property double superPressTimestamp: 0
 
     Connections {
         target: GlobalStates
@@ -113,11 +114,13 @@ Scope {
         description: "Toggles search on release"
 
         onPressed: {
+            root.superPressTimestamp = Date.now();
             GlobalStates.superReleaseMightTrigger = true;
         }
 
         onReleased: {
-            if (!GlobalStates.superReleaseMightTrigger) {
+            const elapsed = Date.now() - root.superPressTimestamp;
+            if (!GlobalStates.superReleaseMightTrigger || elapsed > 350) {
                 GlobalStates.superReleaseMightTrigger = true;
                 return;
             }

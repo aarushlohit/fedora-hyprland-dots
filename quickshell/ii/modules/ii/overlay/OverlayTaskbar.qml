@@ -15,6 +15,7 @@ Rectangle {
     property real padding: 8
 
     opacity: GlobalStates.overlayOpen ? 1 : 0
+    visible: opacity > 0
     implicitWidth: contentRow.implicitWidth + (padding * 2)
     implicitHeight: contentRow.implicitHeight + (padding * 2)
     color: Appearance.m3colors.m3surfaceContainer
@@ -60,10 +61,9 @@ Rectangle {
 
     component Separator: Rectangle {
         implicitWidth: 1
+        implicitHeight: 24
+        Layout.alignment: Qt.AlignVCenter
         color: Appearance.colors.colOutlineVariant
-        Layout.fillHeight: true
-        Layout.topMargin: 10
-        Layout.bottomMargin: 10
     }
 
     component TimeWidget: StyledText {
@@ -133,7 +133,7 @@ Rectangle {
         colBackgroundToggledHover: Appearance.colors.colSecondaryContainerHover
         colRippleToggled: Appearance.colors.colSecondaryContainerActive
 
-        buttonRadius: root.radius - (root.height - height) / 2
+        buttonRadius: Math.max(0, root.radius - Math.max(0, root.height - height) / 2)
 
         contentItem: Item {
             anchors.centerIn: parent

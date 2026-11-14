@@ -47,24 +47,9 @@ Scope {
             HyprlandFocusGrab {
                 id: grab
                 windows: [overlayWindow]
-                active: false
+                active: GlobalStates.overlayOpen
                 onCleared: () => {
-                    if (!active) GlobalStates.overlayOpen = false;
-                }
-            }
-
-            Connections {
-                target: GlobalStates
-                function onOverlayOpenChanged() {
-                    delayedGrabTimer.restart();
-                }
-            }
-
-            Timer {
-                id: delayedGrabTimer
-                interval: Appearance.animation.elementMoveFast.duration
-                onTriggered: {
-                    grab.active = GlobalStates.overlayOpen;
+                    GlobalStates.overlayOpen = false;
                 }
             }
 
