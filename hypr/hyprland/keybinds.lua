@@ -37,11 +37,9 @@
     hl.bind("SUPER + K", hl.dsp.global("quickshell:oskToggle"), { description = "Toggle on-screen keyboard" })
     hl.bind("SUPER + M", hl.dsp.global("quickshell:mediaControlsToggle"), { description = "Toggle media controls" })
     hl.bind("SUPER + G", hl.dsp.global("quickshell:overlayToggle"), { description = "Toggle overlay widgets" })
-    hl.bind("SUPER + G", hl.dsp.exec_cmd("qs -c ii ipc call TEST_ALIVE || (qs -c ii & sleep 0.5 && qs -c ii ipc call overlay toggle)"))
     hl.bind("Super+Shift + G", hl.dsp.group.toggle(), { description = "Toggle window group" })
     hl.bind("Ctrl+Alt + Delete", hl.dsp.global("quickshell:sessionToggle"), { description = "Toggle session menu" })
     hl.bind("SUPER + J", hl.dsp.global("quickshell:barToggle"), { description = "Toggle bar" })
-    hl.bind("Ctrl+Alt + Delete", hl.dsp.exec_cmd("qs -c ii ipc call TEST_ALIVE || pkill wlogout || wlogout -p layer-shell"))
     hl.bind("Shift+Super+Alt + Slash", hl.dsp.exec_cmd("qs -p ~/.config/quickshell/ii/welcome.qml"))
 
     hl.bind("XF86MonBrightnessUp", hl.dsp.exec_cmd("qs -c ii ipc call brightness increment || brightnessctl s 5%+"), { locked = true, repeating = true })
@@ -56,29 +54,21 @@
     hl.bind("Super+Alt + M", hl.dsp.exec_cmd("wpctl set-mute @DEFAULT_SOURCE@ toggle"), { locked = true, description = "Toggle mic" })
     hl.bind("Ctrl+Super + T", hl.dsp.global("quickshell:wallpaperSelectorToggle"), { description = "Toggle wallpaper selector" })
     hl.bind("Ctrl+Super+Alt + T", hl.dsp.global("quickshell:wallpaperSelectorRandom"), { description = "Select random wallpaper" })
-    hl.bind("Ctrl+Super + T", hl.dsp.exec_cmd("qs -c ii ipc call TEST_ALIVE || ~/.config/quickshell/ii/scripts/colors/switchwall.sh"), { description = "Change wallpaper" })
     hl.bind("Ctrl+Super + R", hl.dsp.exec_cmd("killall ydotool qs quickshell; qs -c ii &"))
     hl.bind("Ctrl+Super + P", hl.dsp.global("quickshell:panelFamilyCycle"))
 
     --#! Utilities
     -- Screenshot, Record, OCR, Color picker, Clipboard history
-    hl.bind("SUPER + V", hl.dsp.exec_cmd("qs -c ii ipc call TEST_ALIVE || pkill fuzzel || cliphist list | fuzzel --match-mode fzf --dmenu | cliphist decode | wl-copy"), { description = "Copy clipboard history entry" })
-    hl.bind("SUPER + Period", hl.dsp.exec_cmd("qs -c ii ipc call TEST_ALIVE || pkill fuzzel || /usr/bin/bash /home/aarush/.config/hypr/hyprland/scripts/fuzzel-emoji.sh copy"), { description = "Copy an emoji" })
     hl.bind("Super+Shift + S", hl.dsp.global("quickshell:regionScreenshot"))
-    hl.bind("Super+Shift + S", hl.dsp.exec_cmd("qs -c ii ipc call TEST_ALIVE || pidof slurp || hyprshot --freeze --clipboard-only --mode region --silent"))
     hl.bind("Super+Shift + A", hl.dsp.global("quickshell:regionSearch"))
-    hl.bind("Super+Shift + A", hl.dsp.exec_cmd("qs -c ii ipc call TEST_ALIVE || pidof slurp || /usr/bin/bash /home/aarush/.config/hypr/hyprland/scripts/snip_to_search.sh"))
     -- OCR
     hl.bind("Super+Shift + X", hl.dsp.global("quickshell:regionOcr"))
     hl.bind("Super+Shift + T", hl.dsp.global("quickshell:screenTranslate"))
-    hl.bind("Super+Shift + X", hl.dsp.exec_cmd("qs -c ii ipc call TEST_ALIVE || pidof slurp || grim -g \"$(slurp $SLURP_ARGS)\" \"/tmp/ocr_image.png\" && tesseract \"/tmp/ocr_image.png\" stdout -l $(tesseract --list-langs | awk 'NR>1{print $1}' | tr '\\\\n' '+' | sed 's/\\\\+$/\\\\n/') | wl-copy && rm \"/tmp/ocr_image.png\""))
     -- Color picker
     hl.bind("Super+Shift + C", hl.dsp.exec_cmd("hyprpicker -a"), { description = "Color picker" })
     -- Recording stuff
     hl.bind("Super+Shift + R", hl.dsp.global("quickshell:regionRecord"), { locked = true })
-    hl.bind("Super+Shift + R", hl.dsp.exec_cmd("qs -c ii ipc call TEST_ALIVE || ~/.config/quickshell/ii/scripts/videos/record.sh"), { locked = true })
     hl.bind("Super+Alt + R", hl.dsp.global("quickshell:regionRecord"), { locked = true })
-    hl.bind("Super+Alt + R", hl.dsp.exec_cmd("qs -c ii ipc call TEST_ALIVE || ~/.config/quickshell/ii/scripts/videos/record.sh"), { locked = true })
     hl.bind("Ctrl+Alt + R", hl.dsp.exec_cmd("~/.config/quickshell/ii/scripts/videos/record.sh --fullscreen"), { locked = true })
     hl.bind("Super+Shift+Alt + R", hl.dsp.exec_cmd("~/.config/quickshell/ii/scripts/videos/record.sh --fullscreen --sound"), { locked = true })
     -- Fullscreen screenshot
