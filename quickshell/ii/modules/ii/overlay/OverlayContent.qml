@@ -48,7 +48,7 @@ Item {
             anchors {
                 horizontalCenter: parent.horizontalCenter
                 top: parent.top
-                topMargin: Math.max(95, Appearance.sizes.barHeight + Appearance.rounding.screenRounding + 16)
+                topMargin: Math.max(16, Appearance.sizes.hyprlandGapsOut)
             }
         }
 

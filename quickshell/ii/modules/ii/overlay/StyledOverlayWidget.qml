@@ -75,12 +75,12 @@ AbstractOverlayWidget {
 
     // Positioning & sizing
     x: Math.round(persistentStateEntry.x) // Round or it'll be blurry
-    y: Math.max(90, Math.round(persistentStateEntry.y)) // Round or it'll be blurry
+    y: Math.max(10, Math.round(persistentStateEntry.y)) // Round or it'll be blurry
     pinned: persistentStateEntry.pinned
     clickthrough: persistentStateEntry.clickthrough
     drag {
         minimumX: 0
-        minimumY: 90
+        minimumY: 10
         maximumX: root.parent?.width - root.width
         maximumY: root.parent?.height - root.height
     }
@@ -183,7 +183,7 @@ AbstractOverlayWidget {
 
     function center() {
         const targetX = (root.parent.width - contentColumn.width) / 2 - root.resizeMargin
-        const targetY = Math.max(90, (root.parent.height - contentContainer.height) / 2 - titleBar.implicitHeight + border.border.width - root.resizeMargin)
+        const targetY = Math.max(10, (root.parent.height - contentContainer.height) / 2 - titleBar.implicitHeight + border.border.width - root.resizeMargin)
         root.x = targetX
         root.y = targetY
         root.savePosition(targetX, targetY)

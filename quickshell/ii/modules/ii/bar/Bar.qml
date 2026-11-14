@@ -60,6 +60,7 @@ Scope {
                 mask: Region {
                     item: hoverMaskRegion
                 }
+                visible: !GlobalStates.overlayOpen
                 color: "transparent"
 
                 // Positioning
