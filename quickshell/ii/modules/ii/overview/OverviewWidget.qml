@@ -142,7 +142,7 @@ Item {
                                 onPressed: {
                                     if (root.draggingTargetWorkspace === -1) {
                                         GlobalStates.overviewOpen = false
-                                        Hyprland.dispatch(`workspace ${workspace.workspaceValue}`)
+                                        HyprlandData.dispatch(`workspace ${workspace.workspaceValue}`)
                                     }
                                 }
                             }
@@ -157,6 +157,10 @@ Item {
                                 onExited: {
                                     hoveredWhileDragging = false
                                     if (root.draggingTargetWorkspace == workspace.workspaceValue) root.draggingTargetWorkspace = -1
+                                }
+                                onDropped: {
+                                    root.draggingTargetWorkspace = workspace.workspaceValue
+                                    hoveredWhileDragging = false
                                 }
                             }
 
@@ -261,12 +265,23 @@ Item {
                             // console.log(`[OverviewWindow] Dragging window ${windowData?.address} from position (${window.x}, ${window.y})`)
                         }
                         onReleased: {
-                            const targetWorkspace = root.draggingTargetWorkspace
+                            let targetWorkspace = root.draggingTargetWorkspace
+                            // Fallback coordinate check if DropArea was missed during fast drag
+                            if (targetWorkspace === -1) {
+                                const centerX = window.x + window.width / 2;
+                                const centerY = window.y + window.height / 2;
+                                const col = Math.floor(centerX / (root.workspaceImplicitWidth + root.workspaceSpacing));
+                                const row = Math.floor(centerY / (root.workspaceImplicitHeight + root.workspaceSpacing));
+                                if (col >= 0 && col < Config.options.overview.columns && row >= 0 && row < Config.options.overview.rows) {
+                                    targetWorkspace = root.workspaceGroup * root.workspacesShown + root.getWsInCell(row, col);
+                                }
+                            }
                             window.pressed = false
                             window.Drag.active = false
                             root.draggingFromWorkspace = -1
+                            root.draggingTargetWorkspace = -1
                             if (targetWorkspace !== -1 && targetWorkspace !== windowData?.workspace.id) {
-                                Hyprland.dispatch(`movetoworkspacesilent ${targetWorkspace}, address:${window.windowData?.address}`)
+                                HyprlandData.dispatch(`movetoworkspacesilent ${targetWorkspace}, address:${window.windowData?.address}`)
                                 updateWindowPosition.restart()
                             }
                             else {
@@ -276,7 +291,7 @@ Item {
                                 }
                                 const percentageX = Math.round((window.x - xOffset) / root.workspaceImplicitWidth * 100)
                                 const percentageY = Math.round((window.y - yOffset) / root.workspaceImplicitHeight * 100)
-                                Hyprland.dispatch(`movewindowpixel exact ${percentageX}% ${percentageY}%, address:${window.windowData?.address}`)
+                                HyprlandData.dispatch(`movewindowpixel exact ${percentageX}% ${percentageY}%, address:${window.windowData?.address}`)
                             }
                         }
                         onClicked: (event) => {
@@ -284,10 +299,10 @@ Item {
 
                             if (event.button === Qt.LeftButton) {
                                 GlobalStates.overviewOpen = false
-                                Hyprland.dispatch(`focuswindow address:${windowData.address}`)
+                                HyprlandData.dispatch(`focuswindow address:${windowData.address}`)
                                 event.accepted = true
                             } else if (event.button === Qt.MiddleButton) {
-                                Hyprland.dispatch(`closewindow address:${windowData.address}`)
+                                HyprlandData.dispatch(`closewindow address:${windowData.address}`)
                                 event.accepted = true
                             }
                         }

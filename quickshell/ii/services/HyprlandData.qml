@@ -44,6 +44,85 @@ Singleton {
         return root.windowByAddress[address];
     }
 
+    function dispatch(cmd) {
+        if (!cmd) return;
+        cmd = ("" + cmd).trim();
+        if (cmd.startsWith("hl.") || cmd.startsWith("return hl.")) {
+            Hyprland.dispatch(cmd);
+            return;
+        }
+
+        let m;
+        if ((m = cmd.match(/^movetoworkspacesilent\s+([^,]+),\s*address:(.+)$/))) {
+            const ws = m[1].trim();
+            const addr = m[2].trim();
+            Hyprland.dispatch(`hl.dsp.window.move({ window = 'address:${addr}', workspace = ${isNaN(ws) ? `"${ws}"` : ws}, follow = false })`);
+            return;
+        }
+        if ((m = cmd.match(/^movetoworkspace\s+([^,]+),\s*address:(.+)$/))) {
+            const ws = m[1].trim();
+            const addr = m[2].trim();
+            Hyprland.dispatch(`hl.dsp.window.move({ window = 'address:${addr}', workspace = ${isNaN(ws) ? `"${ws}"` : ws}, follow = true })`);
+            return;
+        }
+        if ((m = cmd.match(/^movetoworkspacesilent\s+(.+)$/))) {
+            const ws = m[1].trim();
+            Hyprland.dispatch(`hl.dsp.window.move({ workspace = ${isNaN(ws) ? `"${ws}"` : ws}, follow = false })`);
+            return;
+        }
+        if ((m = cmd.match(/^movetoworkspace\s+(.+)$/))) {
+            const ws = m[1].trim();
+            Hyprland.dispatch(`hl.dsp.window.move({ workspace = ${isNaN(ws) ? `"${ws}"` : ws}, follow = true })`);
+            return;
+        }
+        if ((m = cmd.match(/^workspace\s+(.+)$/))) {
+            const ws = m[1].trim();
+            Hyprland.dispatch(`hl.dsp.focus({ workspace = ${isNaN(ws) ? `"${ws}"` : ws} })`);
+            return;
+        }
+        if ((m = cmd.match(/^focuswindow\s+address:(.+)$/))) {
+            const addr = m[1].trim();
+            Hyprland.dispatch(`hl.dsp.focus({ window = 'address:${addr}' })`);
+            return;
+        }
+        if ((m = cmd.match(/^closewindow\s+address:(.+)$/))) {
+            const addr = m[1].trim();
+            Hyprland.dispatch(`hl.dsp.window.close({ window = 'address:${addr}' })`);
+            return;
+        }
+        if ((m = cmd.match(/^pin\s+address:(.+)$/))) {
+            const addr = m[1].trim();
+            Hyprland.dispatch(`hl.dsp.window.pin({ window = 'address:${addr}' })`);
+            return;
+        }
+        if ((m = cmd.match(/^movewindowpixel\s+exact\s+([0-9.]+)%\s+([0-9.]+)%,\s*address:(.+)$/))) {
+            const x = m[1].trim();
+            const y = m[2].trim();
+            const addr = m[3].trim();
+            Hyprland.dispatch(`hl.dsp.window.move({ window = 'address:${addr}', x = '${x}%', y = '${y}%', relative = false })`);
+            return;
+        }
+        if (cmd === "togglespecialworkspace") {
+            Hyprland.dispatch('hl.dsp.workspace.toggle_special("")');
+            return;
+        }
+        if (cmd === "reload") {
+            Hyprland.dispatch('hl.dsp.reload_config()');
+            return;
+        }
+        if ((m = cmd.match(/^global\s+(.+)$/))) {
+            Hyprland.dispatch(`hl.dsp.global("${m[1].trim()}")`);
+            return;
+        }
+        if ((m = cmd.match(/^exec\s+(.+)$/))) {
+            const escaped = m[1].trim().replace(/\\/g, "\\\\").replace(/"/g, '\\"');
+            Hyprland.dispatch(`hl.dsp.exec_cmd("${escaped}")`);
+            return;
+        }
+
+        Hyprland.dispatch(cmd);
+    }
+
     // Internals
 
     function updateWindowList() {

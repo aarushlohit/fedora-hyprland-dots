@@ -107,9 +107,9 @@ Item {
                 Layout.alignment: Qt.AlignVCenter
                 onClicked: event => {
                     if (Appearance.m3colors.darkmode) {
-                        Hyprland.dispatch(`exec ${Directories.wallpaperSwitchScriptPath} --mode light --noswitch`);
+                        HyprlandData.dispatch(`exec ${Directories.wallpaperSwitchScriptPath} --mode light --noswitch`);
                     } else {
-                        Hyprland.dispatch(`exec ${Directories.wallpaperSwitchScriptPath} --mode dark --noswitch`);
+                        HyprlandData.dispatch(`exec ${Directories.wallpaperSwitchScriptPath} --mode dark --noswitch`);
                     }
                 }
                 MaterialSymbol {
