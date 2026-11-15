@@ -27,11 +27,10 @@ MouseArea {
             item.activate();
             break;
         case Qt.RightButton:
-            if (item.hasMenu)
-                if (menu.active && menu.item && typeof menu.item.close === "function")
-                    menu.item.close();
-                else 
-                    menu.open();
+            if (menu.active && menu.item && typeof menu.item.close === "function")
+                menu.item.close();
+            else 
+                menu.open();
             break;
         }
         event.accepted = true;
@@ -48,7 +47,8 @@ MouseArea {
         active: false
         sourceComponent: SysTrayMenu {
             Component.onCompleted: this.open();
-            trayItemMenuHandle: root.item.menu
+            trayItem: root.item
+            trayItemMenuHandle: root.item.hasMenu ? root.item.menu : null
             trayItemId: root.item.id
             anchor {
                 window: root.QsWindow.window

@@ -26,27 +26,41 @@ Singleton {
 
     // Pinning
     function pin(itemId) {
-        var pins = Config.options.tray.pinnedItems;
+        if (!itemId) return;
+        var pins = [...Config.options.tray.pinnedItems];
         if (pins.includes(itemId)) return;
-        Config.options.tray.pinnedItems.push(itemId);
+        pins.push(itemId);
+        Config.options.tray.pinnedItems = pins;
     }
     function unpin(itemId) {
+        if (!itemId) return;
         Config.options.tray.pinnedItems = Config.options.tray.pinnedItems.filter(id => id !== itemId);
     }
     function isPinned(itemId) {
+        if (!itemId) return false;
         for (var i = 0; i < root.pinnedItems.length; i++) {
-            if (root.pinnedItems[i].id === itemId)
+            if (root.pinnedItems[i] && root.pinnedItems[i].id === itemId)
                 return true;
         }
         return false;
     }
 
     function togglePin(itemId) {
-        var pins = Config.options.tray.pinnedItems;
-        if (pins.includes(itemId)) {
-            unpin(itemId)
+        if (!itemId) return;
+        if (isPinned(itemId)) {
+            // Currently pinned to bar -> unpin it (move to overflow)
+            if (root.invertPins) {
+                pin(itemId);
+            } else {
+                unpin(itemId);
+            }
         } else {
-            pin(itemId)
+            // Currently unpinned in overflow -> pin it to bar
+            if (root.invertPins) {
+                unpin(itemId);
+            } else {
+                pin(itemId);
+            }
         }
     }
 

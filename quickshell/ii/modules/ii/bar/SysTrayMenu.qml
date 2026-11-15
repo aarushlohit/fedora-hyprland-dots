@@ -10,7 +10,8 @@ import Quickshell
 
 PopupWindow {
     id: root
-    required property QsMenuHandle trayItemMenuHandle
+    property QsMenuHandle trayItemMenuHandle: null
+    property var trayItem: null
     property string trayItemId: ""
     property real popupBackgroundMargin: 0
 
@@ -122,7 +123,7 @@ PopupWindow {
 
     component SubMenu: ColumnLayout {
         id: submenu
-        required property QsMenuHandle handle
+        property QsMenuHandle handle: null
         property bool isSubMenu: false
         property bool shown: false
         opacity: shown ? 1 : 0
@@ -176,6 +177,47 @@ PopupWindow {
                 }
             }
         }
+
+        RippleButton {
+            id: openEntry
+            buttonRadius: popupBackground.radius - popupBackground.padding
+            horizontalPadding: 12
+            implicitWidth: contentItem.implicitWidth + horizontalPadding * 2
+            implicitHeight: 36
+            Layout.topMargin: 0
+            Layout.bottomMargin: 0
+            Layout.fillWidth: true
+
+            visible: root.trayItem !== null && stackView.depth === 1
+            releaseAction: () => {
+                if (root.trayItem && typeof root.trayItem.activate === "function") {
+                    root.trayItem.activate();
+                }
+                root.close();
+            }
+
+            contentItem: RowLayout {
+                anchors {
+                    verticalCenter: parent.verticalCenter
+                    left: parent.left
+                    right: parent.right
+                    leftMargin: openEntry.horizontalPadding
+                    rightMargin: openEntry.horizontalPadding
+                }
+                spacing: 8
+
+                MaterialSymbol {
+                    iconSize: 18
+                    text: "open_in_new"
+                }
+
+                StyledText {
+                    Layout.fillWidth: true
+                    text: Translation.tr("Open")
+                }
+            }
+        }
+
         RippleButton {
             id: pinEntry
             buttonRadius: popupBackground.radius - popupBackground.padding
@@ -187,7 +229,10 @@ PopupWindow {
             Layout.fillWidth: true
 
             visible: root.trayItemId !== undefined && root.trayItemId.length > 0 && stackView.depth === 1
-            releaseAction: () => TrayService.togglePin(root.trayItemId);
+            releaseAction: () => {
+                TrayService.togglePin(root.trayItemId);
+                root.close();
+            }
 
             contentItem: RowLayout {
                 anchors {
@@ -201,7 +246,7 @@ PopupWindow {
 
                 MaterialSymbol {
                     iconSize: 18
-                    text: "push_pin"
+                    text: TrayService.isPinned(root.trayItemId) ? "keep_off" : "push_pin"
                 }
 
                 StyledText {
@@ -217,6 +262,7 @@ PopupWindow {
             color: Appearance.colors.colSubtext
             Layout.topMargin: 4
             Layout.bottomMargin: 4
+            visible: stackView.depth === 1 && menuOpener.children.values.length > 0
         }
 
         Repeater {
