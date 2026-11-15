@@ -9,8 +9,8 @@
     --!
     --#! Shell
     -- These absolutely need to be on top, or they won't work consistently
-    hl.bind("SUPER + Super_L", hl.dsp.global("quickshell:searchToggleRelease"), { ignore_mods = true, description = "Toggle search" })
-    hl.bind("SUPER + Super_R", hl.dsp.global("quickshell:searchToggleRelease"), { ignore_mods = true, description = "Toggle search" })
+    hl.bind("SUPER + Super_L", hl.dsp.global("quickshell:searchToggleRelease"), { release = true, ignore_mods = true, description = "Toggle search" })
+    hl.bind("SUPER + Super_R", hl.dsp.global("quickshell:searchToggleRelease"), { release = true, ignore_mods = true, description = "Toggle search" })
     hl.bind("SUPER + catchall", hl.dsp.global("quickshell:searchToggleReleaseInterrupt"), { non_consuming = true, transparent = true, ignore_mods = true })
     hl.bind("CTRL + Super_L", hl.dsp.global("quickshell:searchToggleReleaseInterrupt"))
     hl.bind("CTRL + Super_R", hl.dsp.global("quickshell:searchToggleReleaseInterrupt"))

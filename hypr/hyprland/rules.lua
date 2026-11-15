@@ -26,6 +26,7 @@ hl.window_rule({
     },
     center = true,
     float = true,
+    size = "(monitor_w*.65) (monitor_h*.65)",
 })
 
 hl.window_rule({
@@ -34,6 +35,7 @@ hl.window_rule({
     },
     center = true,
     float = true,
+    size = "(monitor_w*.65) (monitor_h*.65)",
 })
 
 hl.window_rule({
@@ -51,6 +53,7 @@ hl.window_rule({
     },
     center = true,
     float = true,
+    size = "(monitor_w*.65) (monitor_h*.65)",
 })
 
 hl.window_rule({
@@ -59,6 +62,16 @@ hl.window_rule({
     },
     center = true,
     float = true,
+    size = "(monitor_w*.65) (monitor_h*.65)",
+})
+
+hl.window_rule({
+    match = {
+        title = "^(Save File)(.*)$",
+    },
+    center = true,
+    float = true,
+    size = "(monitor_w*.65) (monitor_h*.65)",
 })
 
 hl.window_rule({
@@ -67,6 +80,7 @@ hl.window_rule({
     },
     center = true,
     float = true,
+    size = "(monitor_w*.65) (monitor_h*.65)",
 })
 
 hl.window_rule({
@@ -75,6 +89,7 @@ hl.window_rule({
     },
     center = true,
     float = true,
+    size = "(monitor_w*.65) (monitor_h*.65)",
 })
 
 hl.window_rule({
@@ -83,6 +98,7 @@ hl.window_rule({
     },
     center = true,
     float = true,
+    size = "(monitor_w*.65) (monitor_h*.65)",
 })
 
 hl.window_rule({
@@ -91,6 +107,7 @@ hl.window_rule({
     },
     center = true,
     float = true,
+    size = "(monitor_w*.65) (monitor_h*.65)",
 })
 
 hl.window_rule({

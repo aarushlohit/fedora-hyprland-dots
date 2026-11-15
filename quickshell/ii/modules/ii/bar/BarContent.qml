@@ -11,6 +11,7 @@ import qs.modules.common.functions
 
 Item { // Bar content region
     id: root
+    clip: true
 
     property var screen: root.QsWindow.window?.screen
     property var brightnessMonitor: Brightness.getMonitorForScreen(screen)
