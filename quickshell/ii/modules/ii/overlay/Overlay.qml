@@ -19,7 +19,7 @@ Scope {
     
     Loader {
         id: overlayLoader
-        active: GlobalStates.overlayOpen || OverlayContext.hasPinnedWidgets
+        active: (GlobalStates.overlayOpen || OverlayContext.hasPinnedWidgets) && !GlobalStates.regionSelectorOpen
         sourceComponent: PanelWindow {
             id: overlayWindow
             exclusionMode: ExclusionMode.Ignore
@@ -27,7 +27,7 @@ Scope {
             WlrLayershell.layer: WlrLayer.Overlay
             // Use OnDemand for pinned widgets to allow focus switching with mouse clicks
             WlrLayershell.keyboardFocus: GlobalStates.overlayOpen ? WlrKeyboardFocus.Exclusive : (OverlayContext.clickableWidgets.length > 0 ? WlrKeyboardFocus.OnDemand : WlrKeyboardFocus.None)
-            visible: true
+            visible: !GlobalStates.regionSelectorOpen
             color: "transparent"
 
             mask: Region {
@@ -47,9 +47,24 @@ Scope {
             HyprlandFocusGrab {
                 id: grab
                 windows: [overlayWindow]
-                active: GlobalStates.overlayOpen
+                active: false
                 onCleared: () => {
-                    GlobalStates.overlayOpen = false;
+                    if (!active) GlobalStates.overlayOpen = false;
+                }
+            }
+
+            Connections {
+                target: GlobalStates
+                function onOverlayOpenChanged() {
+                    delayedGrabTimer.restart();
+                }
+            }
+
+            Timer {
+                id: delayedGrabTimer
+                interval: Appearance.animation.elementMoveFast.duration
+                onTriggered: {
+                    grab.active = GlobalStates.overlayOpen;
                 }
             }
 
@@ -65,6 +80,14 @@ Scope {
 
         function toggle(): void {
             GlobalStates.overlayOpen = !GlobalStates.overlayOpen;
+        }
+
+        function close(): void {
+            GlobalStates.overlayOpen = false;
+        }
+
+        function open(): void {
+            GlobalStates.overlayOpen = true;
         }
     }
 

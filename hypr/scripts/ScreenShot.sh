@@ -80,8 +80,14 @@ countdown() {
 	done
 }
 
+close_quickshell_overlay() {
+	qs -c ii ipc call overlay close 2>/dev/null || true
+	sleep 0.15
+}
+
 # take shots
 shotnow() {
+	close_quickshell_overlay
 	cd ${dir} && grim - | tee "$file" | wl-copy
 	sleep 2
 	notify_view
@@ -89,6 +95,7 @@ shotnow() {
 
 shot5() {
 	countdown '5'
+	close_quickshell_overlay
 	sleep 1 && cd ${dir} && grim - | tee "$file" | wl-copy
 	sleep 1
 	notify_view
@@ -96,11 +103,13 @@ shot5() {
 
 shot10() {
 	countdown '10'
+	close_quickshell_overlay
 	sleep 1 && cd ${dir} && grim - | tee "$file" | wl-copy
 	notify_view
 }
 
 shotwin() {
+	close_quickshell_overlay
 	w_pos=$(hyprctl activewindow | grep 'at:' | cut -d':' -f2 | tr -d ' ' | tail -n1)
 	w_size=$(hyprctl activewindow | grep 'size:' | cut -d':' -f2 | tr -d ' ' | tail -n1 | sed s/,/x/g)
 	cd ${dir} && grim -g "$w_pos $w_size" - | tee "$file" | wl-copy
@@ -108,6 +117,7 @@ shotwin() {
 }
 
 shotarea() {
+	close_quickshell_overlay
 	tmpfile=$(mktemp)
 	grim -g "$(slurp)" - >"$tmpfile"
 
@@ -120,6 +130,7 @@ shotarea() {
 }
 
 shotactive() {
+	close_quickshell_overlay
     active_window_class=$(hyprctl -j activewindow | jq -r '(.class)')
     active_window_file="Screenshot_${time}_${active_window_class}.png"
     active_window_path="${dir}/${active_window_file}"
@@ -130,6 +141,7 @@ shotactive() {
 }
 
 shotswappy() {
+	close_quickshell_overlay
 	tmpfile=$(mktemp)
 	grim -g "$(slurp)" - >"$tmpfile" 
 

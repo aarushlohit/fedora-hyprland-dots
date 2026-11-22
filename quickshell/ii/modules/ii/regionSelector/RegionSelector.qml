@@ -15,6 +15,41 @@ Scope {
 
     property var action: RegionSelection.SnipAction.Copy
     property var selectionMode: RegionSelection.SelectionMode.RectCorners
+
+    Timer {
+        id: openDelayTimer
+        interval: 200
+        repeat: false
+        property var callback: null
+        onTriggered: {
+            if (callback) {
+                callback();
+                callback = null;
+            }
+        }
+    }
+
+    function openRegionSelector(setupAction) {
+        const hadOpen = GlobalStates.overlayOpen || GlobalStates.sidebarRightOpen || 
+                        GlobalStates.sidebarLeftOpen || GlobalStates.overviewOpen || 
+                        GlobalStates.mediaControlsOpen;
+        GlobalStates.overlayOpen = false;
+        GlobalStates.sidebarRightOpen = false;
+        GlobalStates.sidebarLeftOpen = false;
+        GlobalStates.overviewOpen = false;
+        GlobalStates.mediaControlsOpen = false;
+
+        if (hadOpen) {
+            openDelayTimer.callback = () => {
+                setupAction();
+                GlobalStates.regionSelectorOpen = true;
+            };
+            openDelayTimer.restart();
+        } else {
+            setupAction();
+            GlobalStates.regionSelectorOpen = true;
+        }
+    }
     
     Variants {
         model: Quickshell.screens
@@ -33,41 +68,44 @@ Scope {
     }
 
     function screenshot() {
-        root.action = RegionSelection.SnipAction.Copy
-        root.selectionMode = RegionSelection.SelectionMode.RectCorners
-        GlobalStates.regionSelectorOpen = true
+        openRegionSelector(() => {
+            root.action = RegionSelection.SnipAction.Copy;
+            root.selectionMode = RegionSelection.SelectionMode.RectCorners;
+        });
     }
 
     function search() {
-        root.action = RegionSelection.SnipAction.Search
-        if (Config.options.search.imageSearch.useCircleSelection) {
-            root.selectionMode = RegionSelection.SelectionMode.Circle
-        } else {
-            root.selectionMode = RegionSelection.SelectionMode.RectCorners
-        }
-        GlobalStates.regionSelectorOpen = true
+        openRegionSelector(() => {
+            root.action = RegionSelection.SnipAction.Search;
+            if (Config.options.search.imageSearch.useCircleSelection) {
+                root.selectionMode = RegionSelection.SelectionMode.Circle;
+            } else {
+                root.selectionMode = RegionSelection.SelectionMode.RectCorners;
+            }
+        });
     }
 
     function ocr() {
-        root.action = RegionSelection.SnipAction.CharRecognition
-        root.selectionMode = RegionSelection.SelectionMode.RectCorners
-        GlobalStates.regionSelectorOpen = true
+        openRegionSelector(() => {
+            root.action = RegionSelection.SnipAction.CharRecognition;
+            root.selectionMode = RegionSelection.SelectionMode.RectCorners;
+        });
     }
 
     function record() {
-        root.action = RegionSelection.SnipAction.Record
-        root.selectionMode = RegionSelection.SelectionMode.RectCorners
-        // If already open then re-trigger to stop recording
-        if (GlobalStates.regionSelectorOpen) GlobalStates.regionSelectorOpen = false
-        GlobalStates.regionSelectorOpen = true
+        if (GlobalStates.regionSelectorOpen) GlobalStates.regionSelectorOpen = false;
+        openRegionSelector(() => {
+            root.action = RegionSelection.SnipAction.Record;
+            root.selectionMode = RegionSelection.SelectionMode.RectCorners;
+        });
     }
 
     function recordWithSound() {
-        root.action = RegionSelection.SnipAction.RecordWithSound
-        root.selectionMode = RegionSelection.SelectionMode.RectCorners
-        // If already open then re-trigger to stop recording
-        if (GlobalStates.regionSelectorOpen) GlobalStates.regionSelectorOpen = false
-        GlobalStates.regionSelectorOpen = true
+        if (GlobalStates.regionSelectorOpen) GlobalStates.regionSelectorOpen = false;
+        openRegionSelector(() => {
+            root.action = RegionSelection.SnipAction.RecordWithSound;
+            root.selectionMode = RegionSelection.SelectionMode.RectCorners;
+        });
     }
 
     IpcHandler {

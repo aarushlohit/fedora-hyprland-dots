@@ -13,6 +13,25 @@ StyledOverlayWidget {
     minimumWidth: 310
     minimumHeight: 130
 
+    Timer {
+        id: actionDelayTimer
+        interval: 250
+        repeat: false
+        property var action: null
+        onTriggered: {
+            if (action) {
+                action();
+                action = null;
+            }
+        }
+    }
+
+    function triggerWithHide(action) {
+        GlobalStates.overlayOpen = false;
+        actionDelayTimer.action = action;
+        actionDelayTimer.restart();
+    }
+
     contentItem: OverlayBackground {
         id: contentItem
         radius: root.contentRadius
@@ -30,8 +49,9 @@ StyledOverlayWidget {
                     materialSymbol: "screenshot_region"
                     name: "Screenshot region"
                     onClicked: {
-                        GlobalStates.overlayOpen = false;
-                        Quickshell.execDetached(["qs", "-p", Quickshell.shellPath(""), "ipc", "call", "region", "screenshot"]);
+                        root.triggerWithHide(() => {
+                            Quickshell.execDetached(["qs", "-p", Quickshell.shellPath(""), "ipc", "call", "region", "screenshot"]);
+                        });
                     }
                 }
 
@@ -39,8 +59,9 @@ StyledOverlayWidget {
                     materialSymbol: "photo_camera"
                     name: "Screenshot"
                     onClicked: {
-                        GlobalStates.overlayOpen = false;
-                        Quickshell.execDetached(["bash", "-c", "grim - | wl-copy"]);
+                        root.triggerWithHide(() => {
+                            Quickshell.execDetached(["bash", "-c", "grim - | wl-copy"]);
+                        });
                     }
                 }
 
@@ -48,8 +69,9 @@ StyledOverlayWidget {
                     materialSymbol: "screen_record"
                     name: "Record region"
                     onClicked: {
-                        GlobalStates.overlayOpen = false;
-                        Quickshell.execDetached(["qs", "-p", Quickshell.shellPath(""), "ipc", "call", "region", "recordWithSound"]);
+                        root.triggerWithHide(() => {
+                            Quickshell.execDetached(["qs", "-p", Quickshell.shellPath(""), "ipc", "call", "region", "recordWithSound"]);
+                        });
                     }
                 }
                 
@@ -57,8 +79,9 @@ StyledOverlayWidget {
                     materialSymbol: "capture"
                     name: "Record screen"
                     onClicked: {
-                        GlobalStates.overlayOpen = false;
-                        Quickshell.execDetached([Directories.recordScriptPath, "--fullscreen", "--sound"]);
+                        root.triggerWithHide(() => {
+                            Quickshell.execDetached([Directories.recordScriptPath, "--fullscreen", "--sound"]);
+                        });
                     }
                 }
             }

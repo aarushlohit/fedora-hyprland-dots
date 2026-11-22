@@ -217,7 +217,8 @@ end)
     hl.bind("Super+Alt + Equal", hl.dsp.exec_cmd("notify-send \"Urgent notification\" \"Ah hell no\" -u critical -a 'Hyprland keybind'"))
 
     --#! Session
-    hl.bind("SUPER + L", hl.dsp.exec_cmd("loginctl lock-session"), { description = "Lock" })
+    hl.bind("SUPER + L", hl.dsp.global("quickshell:lock"), { description = "Lock screen" })
+    hl.bind("Ctrl+Alt + L", hl.dsp.global("quickshell:lock"), { description = "Lock screen" })
     hl.bind("Super+Shift + L", hl.dsp.exec_cmd("systemctl suspend || loginctl suspend"), { locked = true, description = "Suspend system" })
     -- bindl=,switch:on:Lid Switch, exec, systemctl suspend || loginctl suspend # [hidden] Suspend when laptop lid is closed, uncomment if for whatever reason it's not the default behavior
     hl.bind("Ctrl+Shift+Alt+Super + Delete", hl.dsp.exec_cmd("systemctl poweroff || loginctl poweroff"), { description = "Shutdown" })
@@ -248,7 +249,7 @@ end)
     hl.bind("SUPER + T", hl.dsp.exec_cmd(terminal))
     hl.bind("Ctrl+Alt + T", hl.dsp.exec_cmd(terminal))
     hl.bind("SUPER + E", hl.dsp.exec_cmd(fileManager))
-    hl.bind("SUPER + W", hl.dsp.exec_cmd(browser))
+    hl.bind("SUPER + B", hl.dsp.exec_cmd("firefox"), { description = "Launch Firefox" })
     hl.bind("SUPER + C", hl.dsp.exec_cmd(codeEditor))
     hl.bind("Ctrl+Super+Shift+Alt + W", hl.dsp.exec_cmd(officeSoftware))
     hl.bind("SUPER + X", hl.dsp.exec_cmd(textEditor))

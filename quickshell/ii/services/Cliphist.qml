@@ -154,4 +154,8 @@ Singleton {
             root.refresh()
         }
     }
+
+    Component.onCompleted: {
+        root.refresh()
+    }
 }
