@@ -1,0 +1,14 @@
+[Unit]
+Description=Quickshell Desktop Shell
+PartOf=graphical-session.target
+After=graphical-session.target
+
+[Service]
+Type=simple
+ExecStart=/usr/bin/quickshell -c ii
+Restart=always
+RestartSec=1
+Environment=QT_QUICK_CONTROLS_STYLE=Basic
+
+[Install]
+WantedBy=graphical-session.target

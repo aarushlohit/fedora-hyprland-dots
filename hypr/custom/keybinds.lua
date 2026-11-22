@@ -25,18 +25,18 @@ hl.bind("Ctrl+Super+Alt + Slash", hl.dsp.exec_cmd("xdg-open ~/.config/hypr/custo
 -- Use ##! to add a section in that column
 -- Add a comment after a bind to add a description, like above
 
--- Wallpaper Selector (Quickshell)
+-- Wallpaper Selectors (Quickshell)
 hl.bind("SUPER + W", hl.dsp.global("quickshell:wallpaperSelectorToggle"), { description = "Select wallpaper" })
 hl.bind("Super+Shift + W", hl.dsp.global("quickshell:wallpaperSelectorToggle"), { description = "Select wallpaper" })
 hl.bind("Ctrl+Alt + W", hl.dsp.global("quickshell:wallpaperSelectorRandom"), { description = "Random wallpaper" })
-
--- Lock Screen
-hl.bind("SUPER + L", hl.dsp.global("quickshell:lock"), { description = "Lock screen" })
-hl.bind("Ctrl+Alt + L", hl.dsp.global("quickshell:lock"), { description = "Lock screen" })
 
 -- Volume without Fn key (F5 = Mute, F6 = Volume Down -, F7 = Volume Up +, F8 = Mic Mute)
 hl.bind("F5", hl.dsp.exec_cmd("wpctl set-mute @DEFAULT_SINK@ toggle"), { locked = true, description = "Toggle mute" })
 hl.bind("F6", hl.dsp.exec_cmd("wpctl set-volume @DEFAULT_AUDIO_SINK@ 2%-"), { locked = true, repeating = true, description = "Volume down (-)" })
 hl.bind("F7", hl.dsp.exec_cmd("wpctl set-volume @DEFAULT_AUDIO_SINK@ 2%+ -l 1.5"), { locked = true, repeating = true, description = "Volume up (+)" })
 hl.bind("F8", hl.dsp.exec_cmd("wpctl set-mute @DEFAULT_SOURCE@ toggle"), { locked = true, description = "Toggle mic mute" })
+
+-- Screenshots
+hl.bind("SUPER + Print", hl.dsp.exec_cmd("bash -c 'd=$(xdg-user-dir PICTURES 2>/dev/null || echo $HOME/Pictures)/Screenshots; mkdir -p \"$d\"; f=\"$d/Screenshot_$(date +%Y-%m-%d_%H.%M.%S).png\"; grim -o \"$(hyprctl activeworkspace -j | jq -r .monitor)\" - | tee >(wl-copy -t image/png) > \"$f\"; notify-send -a \"Screenshot\" \"Screenshot Captured\" \"Saved to $f\" -i \"$f\" & (canberra-gtk-play -i camera-shutter 2>/dev/null || true) &'"), { locked = true, description = "Fullscreen screenshot" })
+
 

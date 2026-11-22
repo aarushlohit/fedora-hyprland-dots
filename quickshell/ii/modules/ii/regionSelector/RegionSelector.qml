@@ -30,6 +30,9 @@ Scope {
     }
 
     function openRegionSelector(setupAction) {
+        if (GlobalStates.regionSelectorOpen) {
+            GlobalStates.regionSelectorOpen = false;
+        }
         const hadOpen = GlobalStates.overlayOpen || GlobalStates.sidebarRightOpen || 
                         GlobalStates.sidebarLeftOpen || GlobalStates.overviewOpen || 
                         GlobalStates.mediaControlsOpen;

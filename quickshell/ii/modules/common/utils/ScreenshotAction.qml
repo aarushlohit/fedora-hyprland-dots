@@ -41,22 +41,22 @@ Singleton {
             return `curl -sF files[]=@'${StringUtils.shellSingleQuoteEscape(filePath)}' ${root.fileUploadApiEndpoint} | jq -r '.files[0].url'`
         }
         const annotationCommand = `${Config.options.regionSelector.annotation.useSatty ? "satty" : "swappy"} -f -`;
+        const targetDir = (saveDir !== "") ? saveDir : (Directories.pictures.replace("file://", "") + "/Screenshots");
+        const notifyCmd = `notify-send -a 'Screenshot' 'Screenshot Captured' "Saved to $savePath and copied to clipboard" -i "$savePath" 2>/dev/null || true`;
+        const soundCmd = `canberra-gtk-play -i camera-shutter 2>/dev/null || paplay /usr/share/sounds/freedesktop/stereo/camera-shutter.oga 2>/dev/null || true`;
         switch (action) {
             case ScreenshotAction.Action.Copy:
-                if (saveDir === "") {
-                    // not saving the screenshot, just copy to clipboard
-                    return ["bash", "-c", `${cropToStdout} | wl-copy && ${cleanup}`]
-                    break;
-                }
                 return [
                     "bash", "-c",
-                    `mkdir -p '${StringUtils.shellSingleQuoteEscape(saveDir)}' && \
-                    saveFileName="screenshot-$(date '+%Y-%m-%d_%H.%M.%S').png" && \
-                    savePath="${saveDir}/$saveFileName" && \
-                    ${cropToStdout} | tee >(wl-copy) > "$savePath" && \
-                    ${cleanup}`
+                    `mkdir -p '${StringUtils.shellSingleQuoteEscape(targetDir)}' && \
+                    saveFileName="Screenshot_$(date '+%Y-%m-%d_%H.%M.%S').png" && \
+                    savePath="${StringUtils.shellSingleQuoteEscape(targetDir)}/$saveFileName" && \
+                    ${cropInPlace} && \
+                    mv '${StringUtils.shellSingleQuoteEscape(screenshotPath)}' "$savePath" && \
+                    wl-copy -t image/png < "$savePath" && \
+                    (${notifyCmd} &) && \
+                    (${soundCmd} &)`
                 ]
-
                 break;
             case ScreenshotAction.Action.Edit:
                 return ["bash", "-c", `${cropToStdout} | ${annotationCommand} && ${cleanup}`]

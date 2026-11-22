@@ -60,7 +60,7 @@ StyledOverlayWidget {
                     name: "Screenshot"
                     onClicked: {
                         root.triggerWithHide(() => {
-                            Quickshell.execDetached(["bash", "-c", "grim - | wl-copy"]);
+                            Quickshell.execDetached(["bash", "-c", "d=$(xdg-user-dir PICTURES 2>/dev/null || echo $HOME/Pictures)/Screenshots; mkdir -p \"$d\"; f=\"$d/Screenshot_$(date +%Y-%m-%d_%H.%M.%S).png\"; grim - | tee >(wl-copy -t image/png) > \"$f\" && notify-send -a 'Screenshot' 'Screenshot Captured' \"Saved to $f and copied to clipboard\" -i \"$f\" & (canberra-gtk-play -i camera-shutter 2>/dev/null || true) &"]);
                         });
                     }
                 }
