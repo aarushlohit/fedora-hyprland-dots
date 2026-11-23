@@ -13,39 +13,9 @@ StyledOverlayWidget {
     minimumWidth: 310
     minimumHeight: 130
 
-    Timer {
-        id: restoreTimer
-        interval: 1500
-        repeat: false
-        onTriggered: {
-            GlobalStates.hideOverlaysForScreenshot = false;
-        }
-    }
-
-    Timer {
-        id: actionDelayTimer
-        interval: 350
-        repeat: false
-        property var action: null
-        onTriggered: {
-            if (action) {
-                action();
-                action = null;
-            }
-        }
-    }
-
     function triggerWithHide(action) {
-        GlobalStates.hideOverlaysForScreenshot = true;
         GlobalStates.overlayOpen = false;
-        actionDelayTimer.action = () => {
-            try {
-                action();
-            } finally {
-                restoreTimer.restart();
-            }
-        };
-        actionDelayTimer.restart();
+        if (action) action();
     }
 
     contentItem: OverlayBackground {
