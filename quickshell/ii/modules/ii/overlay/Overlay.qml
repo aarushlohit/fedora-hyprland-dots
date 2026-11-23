@@ -19,7 +19,7 @@ Scope {
     
     Loader {
         id: overlayLoader
-        active: (GlobalStates.overlayOpen || OverlayContext.hasPinnedWidgets) && !GlobalStates.regionSelectorOpen
+        active: (GlobalStates.overlayOpen || OverlayContext.hasPinnedWidgets) && !GlobalStates.regionSelectorOpen && !GlobalStates.hideOverlaysForScreenshot
         sourceComponent: PanelWindow {
             id: overlayWindow
             exclusionMode: ExclusionMode.Ignore
@@ -27,7 +27,7 @@ Scope {
             WlrLayershell.layer: WlrLayer.Overlay
             // Use OnDemand for pinned widgets to allow focus switching with mouse clicks
             WlrLayershell.keyboardFocus: GlobalStates.overlayOpen ? WlrKeyboardFocus.Exclusive : (OverlayContext.clickableWidgets.length > 0 ? WlrKeyboardFocus.OnDemand : WlrKeyboardFocus.None)
-            visible: !GlobalStates.regionSelectorOpen
+            visible: !GlobalStates.regionSelectorOpen && !GlobalStates.hideOverlaysForScreenshot
             color: "transparent"
 
             mask: Region {

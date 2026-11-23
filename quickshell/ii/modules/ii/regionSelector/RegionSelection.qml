@@ -68,7 +68,7 @@ PanelWindow {
     readonly property real monitorOffsetX: hyprlandMonitor.x
     readonly property real monitorOffsetY: hyprlandMonitor.y
     property int activeWorkspaceId: hyprlandMonitor.activeWorkspace?.id ?? 0
-    property string screenshotPath: `${root.screenshotDir}/image-${screen.name}`
+    property string screenshotPath: `${root.screenshotDir}/image-${screen.name}.png`
     property real dragStartX: 0
     property real dragStartY: 0
     property real draggingX: 0
@@ -228,10 +228,14 @@ PanelWindow {
         stdout: StdioCollector {
             id: imageDimensionCollector
             onStreamFinished: {
-                imageRegions = RegionFunctions.filterImageRegions(
-                    JSON.parse(imageDimensionCollector.text),
-                    root.windowRegions
-                );
+                try {
+                    imageRegions = RegionFunctions.filterImageRegions(
+                        JSON.parse(imageDimensionCollector.text),
+                        root.windowRegions
+                    );
+                } catch (e) {
+                    imageRegions = [];
+                }
             }
         }
     }

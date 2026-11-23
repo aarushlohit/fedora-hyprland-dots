@@ -59,7 +59,7 @@
 
     --#! Utilities
     -- Screenshot, Record, OCR, Color picker, Clipboard history
-    hl.bind("Super+Shift + S", hl.dsp.global("quickshell:regionScreenshot"))
+    hl.bind("Super+Shift + S", hl.dsp.exec_cmd("~/.config/hypr/scripts/ScreenShot.sh --area"), { description = "Region screenshot" })
     hl.bind("Super+Shift + A", hl.dsp.global("quickshell:regionSearch"))
     -- OCR
     hl.bind("Super+Shift + X", hl.dsp.global("quickshell:regionOcr"))
@@ -72,8 +72,8 @@
     hl.bind("Ctrl+Alt + R", hl.dsp.exec_cmd("~/.config/quickshell/ii/scripts/videos/record.sh --fullscreen"), { locked = true })
     hl.bind("Super+Shift+Alt + R", hl.dsp.exec_cmd("~/.config/quickshell/ii/scripts/videos/record.sh --fullscreen --sound"), { locked = true })
     -- Fullscreen screenshot
-    hl.bind("Print", hl.dsp.exec_cmd("bash -c 'd=$(xdg-user-dir PICTURES 2>/dev/null || echo $HOME/Pictures)/Screenshots; mkdir -p \"$d\"; f=\"$d/Screenshot_$(date +%Y-%m-%d_%H.%M.%S).png\"; grim -o \"$(hyprctl activeworkspace -j | jq -r .monitor)\" - | tee >(wl-copy -t image/png) > \"$f\"; notify-send -a \"Screenshot\" \"Screenshot Captured\" \"Saved to $f\" -i \"$f\" & (canberra-gtk-play -i camera-shutter 2>/dev/null || true) &'"), { locked = true, description = "Fullscreen screenshot" })
-    hl.bind("CTRL + Print", hl.dsp.exec_cmd("bash -c 'd=$(xdg-user-dir PICTURES 2>/dev/null || echo $HOME/Pictures)/Screenshots; mkdir -p \"$d\"; f=\"$d/Screenshot_$(date +%Y-%m-%d_%H.%M.%S).png\"; grim -o \"$(hyprctl activeworkspace -j | jq -r .monitor)\" - | tee >(wl-copy -t image/png) > \"$f\"; notify-send -a \"Screenshot\" \"Screenshot Captured\" \"Saved to $f\" -i \"$f\" & (canberra-gtk-play -i camera-shutter 2>/dev/null || true) &'"), { locked = true, description = "Fullscreen screenshot" })
+    hl.bind("Print", hl.dsp.exec_cmd("~/.config/hypr/scripts/ScreenShot.sh --now"), { locked = true, description = "Fullscreen screenshot" })
+    hl.bind("CTRL + Print", hl.dsp.exec_cmd("~/.config/hypr/scripts/ScreenShot.sh --now"), { locked = true, description = "Fullscreen screenshot" })
     -- AI
     hl.bind("Super+Shift+Alt + mouse:273", hl.dsp.exec_cmd("/usr/bin/bash /home/aarush/.config/hypr/hyprland/scripts/ai/primary-buffer-query.sh"), { description = "Generate AI summary for selected text" })
 

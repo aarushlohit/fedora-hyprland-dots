@@ -52,7 +52,7 @@ Singleton {
                     saveFileName="Screenshot_$(date '+%Y-%m-%d_%H.%M.%S').png" && \
                     savePath="${StringUtils.shellSingleQuoteEscape(targetDir)}/$saveFileName" && \
                     ${cropInPlace} && \
-                    mv '${StringUtils.shellSingleQuoteEscape(screenshotPath)}' "$savePath" && \
+                    cp '${StringUtils.shellSingleQuoteEscape(screenshotPath)}' "$savePath" && \
                     wl-copy -t image/png < "$savePath" && \
                     (${notifyCmd} &) && \
                     (${soundCmd} &)`

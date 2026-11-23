@@ -23,53 +23,14 @@ notify_cmd_NOT="notify-send -u low -i ${iDoR}/note.png "
 
 # notify and view screenshot
 notify_view() {
-    if [[ "$1" == "active" ]]; then
-        if [[ -e "${active_window_path}" ]]; then
-			"${sDIR}/Sounds.sh" --screenshot        
-            resp=$(timeout 5 ${notify_cmd_shot_win} " Screenshot of:" " ${active_window_class} Saved.")
-            case "$resp" in
-				action1)
-					xdg-open "${active_window_path}" &
-					;;
-				action2)
-					rm "${active_window_path}" &
-					;;
-			esac
-        else
-            ${notify_cmd_NOT} " Screenshot of:" " ${active_window_class} NOT Saved."
-            "${sDIR}/Sounds.sh" --error
-        fi
-
-    elif [[ "$1" == "swappy" ]]; then
-		"${sDIR}/Sounds.sh" --screenshot
-		resp=$(${notify_cmd_shot} " Screenshot:" " Captured by Swappy")
-		case "$resp" in
-			action1)
-				swappy -f - <"$tmpfile"
-				;;
-			action2)
-				rm "$tmpfile"
-				;;
-		esac
-
-    else
-        local check_file="${dir}/${file}"
-        if [[ -e "$check_file" ]]; then
-            "${sDIR}/Sounds.sh" --screenshot
-            resp=$(timeout 5 ${notify_cmd_shot} " Screenshot" " Saved")
-			case "$resp" in
-				action1)
-					xdg-open "${check_file}" &
-					;;
-				action2)
-					rm "${check_file}" &
-					;;
-			esac
-        else
-            ${notify_cmd_NOT} " Screenshot" " NOT Saved"
-            "${sDIR}/Sounds.sh" --error
-        fi
-    fi
+	local target="$1"
+	if [[ -n "$target" && -e "$target" ]]; then
+		wl-copy -t image/png < "$target" 2>/dev/null || true
+		(canberra-gtk-play -i camera-shutter 2>/dev/null || paplay /usr/share/sounds/freedesktop/stereo/camera-shutter.oga 2>/dev/null || true) &
+		notify-send -a "Screenshot" "Screenshot Captured" "Saved to $(basename "$target") and copied to clipboard" -i "$target" -t 3000 &
+	else
+		notify-send -u low -a "Screenshot" "Screenshot" "Cancelled or not saved" -t 2000 &
+	fi
 }
 
 # countdown
@@ -82,74 +43,77 @@ countdown() {
 
 close_quickshell_overlay() {
 	qs -c ii ipc call overlay close 2>/dev/null || true
-	sleep 0.15
+	sleep 0.3
 }
 
 # take shots
 shotnow() {
 	close_quickshell_overlay
-	cd ${dir} && grim - | tee "$file" | wl-copy
-	sleep 2
-	notify_view
+	local target="${dir}/${file}"
+	grim -o "$(hyprctl activeworkspace -j | jq -r .monitor)" "$target" 2>/dev/null || grim "$target"
+	notify_view "$target"
 }
 
 shot5() {
 	countdown '5'
 	close_quickshell_overlay
-	sleep 1 && cd ${dir} && grim - | tee "$file" | wl-copy
-	sleep 1
-	notify_view
+	local target="${dir}/${file}"
+	sleep 1 && (grim -o "$(hyprctl activeworkspace -j | jq -r .monitor)" "$target" 2>/dev/null || grim "$target")
+	notify_view "$target"
 }
 
 shot10() {
 	countdown '10'
 	close_quickshell_overlay
-	sleep 1 && cd ${dir} && grim - | tee "$file" | wl-copy
-	notify_view
+	local target="${dir}/${file}"
+	sleep 1 && (grim -o "$(hyprctl activeworkspace -j | jq -r .monitor)" "$target" 2>/dev/null || grim "$target")
+	notify_view "$target"
 }
 
 shotwin() {
 	close_quickshell_overlay
+	local w_pos w_size
 	w_pos=$(hyprctl activewindow | grep 'at:' | cut -d':' -f2 | tr -d ' ' | tail -n1)
 	w_size=$(hyprctl activewindow | grep 'size:' | cut -d':' -f2 | tr -d ' ' | tail -n1 | sed s/,/x/g)
-	cd ${dir} && grim -g "$w_pos $w_size" - | tee "$file" | wl-copy
-	notify_view
+	local target="${dir}/${file}"
+	grim -g "$w_pos $w_size" "$target"
+	notify_view "$target"
 }
 
 shotarea() {
 	close_quickshell_overlay
-	tmpfile=$(mktemp)
-	grim -g "$(slurp)" - >"$tmpfile"
-
-  # Copy with saving
-	if [[ -s "$tmpfile" ]]; then
-		wl-copy <"$tmpfile"
-		mv "$tmpfile" "$dir/$file"
-	fi
-	notify_view
+	local geom
+	geom=$(slurp) || return 0
+	[[ -z "$geom" ]] && return 0
+	local target="${dir}/${file}"
+	grim -g "$geom" "$target"
+	notify_view "$target"
 }
 
 shotactive() {
 	close_quickshell_overlay
-    active_window_class=$(hyprctl -j activewindow | jq -r '(.class)')
-    active_window_file="Screenshot_${time}_${active_window_class}.png"
-    active_window_path="${dir}/${active_window_file}"
-
-    hyprctl -j activewindow | jq -r '"\(.at[0]),\(.at[1]) \(.size[0])x\(.size[1])"' | grim -g - "${active_window_path}"
-	sleep 1
-    notify_view "active"
+	local win_geom
+	win_geom=$(hyprctl -j activewindow | jq -r '"\(.at[0]),\(.at[1]) \(.size[0])x\(.size[1])"')
+	[[ -z "$win_geom" || "$win_geom" == "null" ]] && return 0
+	local target="${dir}/${file}"
+	grim -g "$win_geom" "$target"
+	notify_view "$target"
 }
 
 shotswappy() {
 	close_quickshell_overlay
-	tmpfile=$(mktemp)
-	grim -g "$(slurp)" - >"$tmpfile" 
-
-  # Copy without saving
-  if [[ -s "$tmpfile" ]]; then
-		wl-copy <"$tmpfile"
-    notify_view "swappy"
-  fi
+	local geom
+	geom=$(slurp) || return 0
+	[[ -z "$geom" ]] && return 0
+	local tmpfile
+	tmpfile=$(mktemp --suffix=.png)
+	grim -g "$geom" "$tmpfile"
+	if [[ -s "$tmpfile" ]]; then
+		wl-copy -t image/png < "$tmpfile"
+		(canberra-gtk-play -i camera-shutter 2>/dev/null || paplay /usr/share/sounds/freedesktop/stereo/camera-shutter.oga 2>/dev/null || true) &
+		swappy -f "$tmpfile"
+		rm -f "$tmpfile"
+	fi
 }
 
 if [[ ! -d "$dir" ]]; then

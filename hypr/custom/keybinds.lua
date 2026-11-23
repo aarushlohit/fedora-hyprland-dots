@@ -37,6 +37,8 @@ hl.bind("F7", hl.dsp.exec_cmd("wpctl set-volume @DEFAULT_AUDIO_SINK@ 2%+ -l 1.5"
 hl.bind("F8", hl.dsp.exec_cmd("wpctl set-mute @DEFAULT_SOURCE@ toggle"), { locked = true, description = "Toggle mic mute" })
 
 -- Screenshots
-hl.bind("SUPER + Print", hl.dsp.exec_cmd("bash -c 'd=$(xdg-user-dir PICTURES 2>/dev/null || echo $HOME/Pictures)/Screenshots; mkdir -p \"$d\"; f=\"$d/Screenshot_$(date +%Y-%m-%d_%H.%M.%S).png\"; grim -o \"$(hyprctl activeworkspace -j | jq -r .monitor)\" - | tee >(wl-copy -t image/png) > \"$f\"; notify-send -a \"Screenshot\" \"Screenshot Captured\" \"Saved to $f\" -i \"$f\" & (canberra-gtk-play -i camera-shutter 2>/dev/null || true) &'"), { locked = true, description = "Fullscreen screenshot" })
+hl.bind("SUPER + Print", hl.dsp.exec_cmd("~/.config/hypr/scripts/ScreenShot.sh --now"), { locked = true, description = "Fullscreen screenshot" })
+hl.bind("Super+Shift + S", hl.dsp.exec_cmd("~/.config/hypr/scripts/ScreenShot.sh --area"), { description = "Region screenshot" })
+hl.bind("Super+Shift + Print", hl.dsp.exec_cmd("~/.config/hypr/scripts/ScreenShot.sh --swappy"), { description = "Screenshot (swappy)" })
 
 

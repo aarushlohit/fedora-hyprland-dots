@@ -18,6 +18,7 @@ Singleton {
     property bool osdVolumeOpen: false
     property bool oskOpen: false
     property bool overlayOpen: false
+    property bool hideOverlaysForScreenshot: false
     property bool overviewOpen: false
     property bool regionSelectorOpen: false
     property bool searchOpen: false
@@ -47,16 +48,6 @@ Singleton {
         }
         onReleased: {
             root.superDown = false
-        }
-    }
-
-    Connections {
-        target: Hyprland
-
-        function onRawEvent(event) {
-            if (!["openlayer", "closelayer", "screencast"].includes(event.name)) {
-                root.superReleaseMightTrigger = false;
-            }
         }
     }
 }

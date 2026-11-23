@@ -14,8 +14,17 @@ StyledOverlayWidget {
     minimumHeight: 130
 
     Timer {
+        id: restoreTimer
+        interval: 1500
+        repeat: false
+        onTriggered: {
+            GlobalStates.hideOverlaysForScreenshot = false;
+        }
+    }
+
+    Timer {
         id: actionDelayTimer
-        interval: 250
+        interval: 350
         repeat: false
         property var action: null
         onTriggered: {
@@ -27,8 +36,15 @@ StyledOverlayWidget {
     }
 
     function triggerWithHide(action) {
+        GlobalStates.hideOverlaysForScreenshot = true;
         GlobalStates.overlayOpen = false;
-        actionDelayTimer.action = action;
+        actionDelayTimer.action = () => {
+            try {
+                action();
+            } finally {
+                restoreTimer.restart();
+            }
+        };
         actionDelayTimer.restart();
     }
 
@@ -50,7 +66,7 @@ StyledOverlayWidget {
                     name: "Screenshot region"
                     onClicked: {
                         root.triggerWithHide(() => {
-                            Quickshell.execDetached(["qs", "-p", Quickshell.shellPath(""), "ipc", "call", "region", "screenshot"]);
+                            Quickshell.execDetached(["/home/aarush/.config/hypr/scripts/ScreenShot.sh", "--area"]);
                         });
                     }
                 }
@@ -60,7 +76,7 @@ StyledOverlayWidget {
                     name: "Screenshot"
                     onClicked: {
                         root.triggerWithHide(() => {
-                            Quickshell.execDetached(["bash", "-c", "d=$(xdg-user-dir PICTURES 2>/dev/null || echo $HOME/Pictures)/Screenshots; mkdir -p \"$d\"; f=\"$d/Screenshot_$(date +%Y-%m-%d_%H.%M.%S).png\"; grim - | tee >(wl-copy -t image/png) > \"$f\" && notify-send -a 'Screenshot' 'Screenshot Captured' \"Saved to $f and copied to clipboard\" -i \"$f\" & (canberra-gtk-play -i camera-shutter 2>/dev/null || true) &"]);
+                            Quickshell.execDetached(["/home/aarush/.config/hypr/scripts/ScreenShot.sh", "--now"]);
                         });
                     }
                 }
